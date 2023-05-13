@@ -273,6 +273,9 @@ def get_file_names(dir, plain=False, filetypes=[".json"]):
     logging.debug(f"获取文件名列表，目录为{dir}，文件类型为{filetypes}，是否为纯文本列表{plain}")
     files = []
     try:
+        if not os.path.exists(dir):
+            logger.debug(f"目录{dir}不存在，创建中ing...")
+            os.makedirs(dir)
         for type in filetypes:
             files += [f for f in os.listdir(dir) if f.endswith(type)]
     except FileNotFoundError:
@@ -290,6 +293,7 @@ def get_file_names(dir, plain=False, filetypes=[".json"]):
 def get_history_names(plain=False, user_name=""):
     logging.debug(f"从用户 {user_name} 中获取历史记录文件名列表")
     if user_name == "" and hide_history_when_not_logged_in:
+        logging.debug(f"用户名为空或未登陆")
         return ""
     else:
         return get_file_names(os.path.join(HISTORY_DIR, user_name), plain)
