@@ -477,6 +477,7 @@ if __name__ == "__main__":
         server_port=server_port,
         share=share,
         auth=auth_list if authflag else None,
+        auth_message="Welcome to ChatEdu! Login and enjoy!"
         favicon_path="./assets/favicon.ico",
         inbrowser=not dockerflag, # 禁止在docker下开启inbrowser
         show_api=False
