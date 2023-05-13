@@ -33,12 +33,13 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
 
     topic = gr.State(i18n("未命名对话历史记录"))
 
-    with gr.Row():
-        gr.HTML(CHUANHU_TITLE, elem_id="app_title")
-        status_display = gr.Markdown(get_geoip(), elem_id="status_display")
     with gr.Row(elem_id="float_display"):
         user_info = gr.Markdown(value="getting user info...", elem_id="user_info")
-
+    
+    with gr.Row():
+        gr.HTML(CHUANHU_TITLE, elem_id="app_title")
+        status_display = gr.Markdown("Login account:", elem_id="status_display")
+        
     with gr.Row().style(equal_height=True):
         with gr.Column(scale=5):
             with gr.Row():
@@ -275,12 +276,15 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
             logging.info(f"Get User Name: {request.username}")
             user_info, user_name = gr.Markdown.update(value=f"User: {request.username}"), request.username
         else:
+            logging.info(f"No User Name!")
             user_info, user_name = gr.Markdown.update(value=f"", visible=False), ""
         current_model = get_model(model_name = MODELS[DEFAULT_MODEL], access_key = my_api_key)[0]
         current_model.set_user_identifier(user_name)
         chatbot = gr.Chatbot.update(label=MODELS[DEFAULT_MODEL])
         return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *current_model.auto_load(), get_history_names(False, user_name), chatbot
     demo.load(create_greeting, inputs=None, outputs=[user_info, user_name, current_model, like_dislike_area, systemPromptTxt, chatbot, historyFileSelectDropdown, chatbot], api_name="load")
+    
+    status_display = gr.Markdown.update(value=f"Login account: {request.username}")
     chatgpt_predict_args = dict(
         fn=predict,
         inputs=[
@@ -458,23 +462,24 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
         show_progress=True,
     )
 
-logging.info(
-    colorama.Back.GREEN
-    + "\n川虎的温馨提示：访问 http://localhost:7860 查看界面"
-    + colorama.Style.RESET_ALL
-)
+# logging.info(
+#     colorama.Back.GREEN
+#     + "\n川虎的温馨提示：访问 http://localhost:7860 查看界面"
+#     + colorama.Style.RESET_ALL
+# )
 # 默认开启本地服务器，默认可以直接从IP访问，默认不创建公开分享链接
-demo.title = i18n("川虎Chat 🚀")
+demo.title = i18n("ChatEdu ✒️")
 
 if __name__ == "__main__":
     reload_javascript()
-    demo.queue(concurrency_count=CONCURRENT_COUNT).launch(
+    demo.queue(concurrency_count=CONCURRENT_COUNT, api_open=False).launch(
         server_name=server_name,
         server_port=server_port,
         share=share,
         auth=auth_list if authflag else None,
         favicon_path="./assets/favicon.ico",
         inbrowser=not dockerflag, # 禁止在docker下开启inbrowser
+        show_api=False
     )
     # demo.queue(concurrency_count=CONCURRENT_COUNT).launch(server_name="0.0.0.0", server_port=7860, share=False) # 可自定义端口
     # demo.queue(concurrency_count=CONCURRENT_COUNT).launch(server_name="0.0.0.0", server_port=7860,auth=("在这里填写用户名", "在这里填写密码")) # 可设置用户名与密码
