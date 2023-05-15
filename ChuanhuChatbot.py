@@ -267,7 +267,7 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
                         changeProxyBtn = gr.Button(i18n("🔄 设置代理地址"))
                         default_btn = gr.Button(i18n("🔙 恢复默认设置"))
 
-    gr.Markdown(CHUANHU_DESCRIPTION, elem_id="description")
+#     gr.Markdown(CHUANHU_DESCRIPTION, elem_id="description")
     gr.HTML(FOOTER.format(versions=versions_html()), elem_id="footer")
     
     # https://github.com/gradio-app/gradio/pull/3296
@@ -275,6 +275,7 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
         if hasattr(request, "username") and request.username: # is not None or is not ""
             logging.info(f"Get User Name: {request.username}")
             user_info, user_name = gr.Markdown.update(value=f"User: {request.username}"), request.username
+            status_display = gr.Markdown.update(value=f"Login account: {request.username}")
         else:
             logging.info(f"No User Name!")
             user_info, user_name = gr.Markdown.update(value=f"", visible=False), ""
@@ -284,7 +285,7 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
         return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *current_model.auto_load(), get_history_names(False, user_name), chatbot
     demo.load(create_greeting, inputs=None, outputs=[user_info, user_name, current_model, like_dislike_area, systemPromptTxt, chatbot, historyFileSelectDropdown, chatbot], api_name="load")
     
-    status_display = gr.Markdown.update(value=f"Login account: {request.username}")
+    
     chatgpt_predict_args = dict(
         fn=predict,
         inputs=[
@@ -477,7 +478,7 @@ if __name__ == "__main__":
         server_port=server_port,
         share=share,
         auth=auth_list if authflag else None,
-        auth_message="Welcome to ChatEdu! Login and enjoy!"
+        auth_message="Welcome to ChatEdu! Login and enjoy!",
         favicon_path="./assets/favicon.ico",
         inbrowser=not dockerflag, # 禁止在docker下开启inbrowser
         show_api=False
