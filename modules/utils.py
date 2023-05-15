@@ -274,7 +274,7 @@ def get_file_names(dir, plain=False, filetypes=[".json"]):
     files = []
     try:
         if not os.path.exists(dir):
-            logger.debug(f"目录{dir}不存在，创建中ing...")
+            logging.debug(f"目录{dir}不存在，创建中ing...")
             os.makedirs(dir)
         for type in filetypes:
             files += [f for f in os.listdir(dir) if f.endswith(type)]
@@ -487,7 +487,7 @@ def versions_html():
         commit_hash = "<none>"
     if commit_hash != "<none>":
         short_commit = commit_hash[0:7]
-        commit_info = f"<a style=\"text-decoration:none;color:inherit\" href=\"https://github.com/GaiZhenbiao/ChuanhuChatGPT/commit/{short_commit}\">{short_commit}</a>"
+        commit_info = f"<a style=\"text-decoration:none;color:inherit\" href=\"https://github.com/Ulysses0817/ChuanhuChatGPT/commit/{short_commit}\">{short_commit}</a>"
     else:
         commit_info = "unknown \U0001F615"
     return f"""
@@ -495,7 +495,7 @@ def versions_html():
          • 
         Gradio: {gr.__version__}
          • 
-        <a style="text-decoration:none;color:inherit" href="https://github.com/GaiZhenbiao/ChuanhuChatGPT">ChuanhuChat</a>: {commit_info}
+        <a style="text-decoration:none;color:inherit" href="https://github.com/Ulysses0817/ChuanhuChatGPT">ChuanhuChat</a>: {commit_info}
         """
 
 def add_source_numbers(lst, source_name = "Source", use_source = True):

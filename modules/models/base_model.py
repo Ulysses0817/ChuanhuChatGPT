@@ -95,7 +95,7 @@ class BaseLLMModel:
         self.presence_penalty = presence_penalty
         self.frequency_penalty = frequency_penalty
         self.logit_bias = logit_bias
-        self.user_identifier = user
+        self.set_user_identifier(user)
 
     def get_answer_stream_iter(self):
         """stream predict, need to be implemented
@@ -143,9 +143,10 @@ class BaseLLMModel:
         user_token_count = self.count_token(inputs)
         self.all_token_counts.append(user_token_count)
         logging.debug(f"输入token计数: {user_token_count}")
-
+        
         stream_iter = self.get_answer_stream_iter()
-
+        
+        partial_text = ""
         for partial_text in stream_iter:
             chatbot[-1] = (chatbot[-1][0], partial_text + display_append)
             self.all_token_counts[-1] += 1
@@ -154,7 +155,10 @@ class BaseLLMModel:
             if self.interrupted:
                 self.recover()
                 break
-        self.history.append(construct_assistant(partial_text))
+        if len(partial_text.strip()) > 0:
+            self.history.append(construct_assistant(partial_text))
+        else:
+            self.history.pop()
 
     def next_chatbot_at_once(self, inputs, chatbot, fake_input=None, display_append=""):
         if fake_input:
@@ -279,17 +283,19 @@ class BaseLLMModel:
         use_websearch=False,
         files=None,
         reply_language="中文",
+        current_user=None,
         should_check_token_count=True,
     ):  # repetition_penalty, top_k
 
+        self.set_user_identifier(current_user)
         status_text = "开始生成回答……"
         logging.info(
-            "输入为：" + colorama.Fore.BLUE + f"{inputs}" + colorama.Style.RESET_ALL
+            f"{current_user}输入为：" + colorama.Fore.BLUE + f"{inputs}" + colorama.Style.RESET_ALL
         )
         if should_check_token_count:
             yield chatbot + [(inputs, "")], status_text
         if reply_language == "跟随问题语言（不稳定）":
-            reply_language = "the same language as the question, such as English, 中文, 日本語, Español, Français, or Deutsch."
+            reply_language = "" # the same language as the question, such as English, 中文, 日本語, Español, Français, or Deutsch.
 
         limited_context, fake_inputs, display_append, inputs, chatbot = self.prepare_inputs(real_inputs=inputs, use_websearch=use_websearch, files=files, reply_language=reply_language, chatbot=chatbot)
         yield chatbot + [(fake_inputs, "")], status_text
@@ -348,7 +354,7 @@ class BaseLLMModel:
 
         if len(self.history) > 1 and self.history[-1]["content"] != inputs:
             logging.info(
-                "回答为："
+                f"{self.model_name}回答为："
                 + colorama.Fore.BLUE
                 + f"{self.history[-1]['content']}"
                 + colorama.Style.RESET_ALL

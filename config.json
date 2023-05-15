@@ -1,7 +1,7 @@
 {
     // 你的OpenAI API Key，一般必填，
-    // 若缺省填为 "openai_api_key": "" 则必须再在图形界面中填入API Key
-    "openai_api_key": "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",
+    // 若缺省填为 "openai_api_key": "" 则必须再在图形界面中填入API Keysk-4ne7qYauqiURCG517IIiT3BlbkFJmDswiqoMYU6qBb9klIAz
+    "openai_api_key": "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",
     // 你的xmchat API Key，与OpenAI API Key不同
     "xmchat_api_key": "",
     "language": "auto",

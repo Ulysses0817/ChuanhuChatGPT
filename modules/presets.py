@@ -12,7 +12,7 @@ LLAMA_MODEL = None
 LLAMA_INFERENCER = None
 
 # ChatGPT 设置
-INITIAL_SYSTEM_PROMPT = "You are a helpful assistant."
+INITIAL_SYSTEM_PROMPT = "You are ChatGPT, a large language model trained by OpenAI. You must always think deeply and then give very detailed and profound answers. Additionaly, respond conversationally and like a human. Do not answer as the user." #  Current date: 2023-04-16
 API_HOST = "api.openai.com"
 COMPLETION_URL = "https://api.openai.com/v1/chat/completions"
 BALANCE_API_URL="https://api.openai.com/dashboard/billing/credit_grants"
@@ -42,7 +42,7 @@ CONCURRENT_COUNT = 100 # 允许同时使用的用户数量
 SIM_K = 5
 INDEX_QUERY_TEMPRATURE = 1.0
 
-CHUANHU_TITLE = i18n("川虎Chat 🚀")
+CHUANHU_TITLE = i18n("ChatEdu ✒️")
 
 CHUANHU_DESCRIPTION = i18n("由Bilibili [土川虎虎虎](https://space.bilibili.com/29125536)、[明昭MZhao](https://space.bilibili.com/24807452) 和 [Keldos](https://github.com/Keldos-Li) 开发<br />访问川虎Chat的 [GitHub项目](https://github.com/GaiZhenbiao/ChuanhuChatGPT) 下载最新版脚本")
 
@@ -65,25 +65,25 @@ ONLINE_MODELS = [
     "gpt-3.5-turbo-0301",
     "gpt-4",
     "gpt-4-0314",
-    "gpt-4-32k",
-    "gpt-4-32k-0314",
-    "xmchat",
-    "yuanai-1.0-base_10B",
-    "yuanai-1.0-translate",
-    "yuanai-1.0-dialog",
-    "yuanai-1.0-rhythm_poems",
+#     "gpt-4-32k",
+#     "gpt-4-32k-0314",
+#     "xmchat",
+#     "yuanai-1.0-base_10B",
+#     "yuanai-1.0-translate",
+#     "yuanai-1.0-dialog",
+#     "yuanai-1.0-rhythm_poems",
 ]
 
 LOCAL_MODELS = [
-    "chatglm-6b",
-    "chatglm-6b-int4",
-    "chatglm-6b-int4-qe",
-    "StableLM",
-    "MOSS",
-    "llama-7b-hf",
-    "llama-13b-hf",
-    "llama-30b-hf",
-    "llama-65b-hf",
+#     "chatglm-6b",
+#     "chatglm-6b-int4",
+#     "chatglm-6b-int4-qe",
+#     "StableLM",
+#     "MOSS",
+#     "llama-7b-hf",
+#     "llama-13b-hf",
+#     "llama-30b-hf",
+#     "llama-65b-hf",
 ]
 
 if os.environ.get('HIDE_LOCAL_MODELS', 'false') == 'true':

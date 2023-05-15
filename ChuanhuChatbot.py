@@ -10,7 +10,7 @@ from modules import config
 from modules import shared
 from modules.config import my_api_key, authflag, auth_list, dockerflag, advance_docs, update_doc_config, render_latex, multi_api_key, server_name, server_port, share
 from modules.utils import predict, billing_info, set_key, load_chat_history, interrupt, reset, retry, delete_first_conversation, delete_last_conversation, set_system_prompt, save_chat_history, export_markdown, load_chat_history, upload_chat_history, set_token_upper_limit, set_temperature, set_top_p, set_n_choices, set_stop_sequence, set_max_tokens, set_presence_penalty, set_frequency_penalty, set_logit_bias, set_user_identifier, set_single_turn, handle_file_upload, like, dislike, get_history_names, load_template, get_template_names, get_template_content, reset_textbox, reset_default, change_api_host, change_proxy, hide_middle_chars, start_outputing, end_outputing, transfer_input, versions_html, toggle_like_btn_visibility
-from modules.presets import APPEARANCE_SWITCHER, DEFAULT_MODEL, ENABLE_STREAMING_OPTION, FOOTER, HIDE_MY_KEY, INITIAL_SYSTEM_PROMPT, MODELS, REPLY_LANGUAGES, i18n, small_and_beautiful_theme
+from modules.presets import CONCURRENT_COUNT, APPEARANCE_SWITCHER, DEFAULT_MODEL, CHUANHU_TITLE, ENABLE_STREAMING_OPTION, FOOTER, HIDE_MY_KEY, INITIAL_SYSTEM_PROMPT, MODELS, REPLY_LANGUAGES, i18n, small_and_beautiful_theme
 from modules.overwrites import compact_text_chunks, postprocess, postprocess_chat_messages, reload_javascript
 from modules.models.models import get_model
 
@@ -40,12 +40,12 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
     
     with gr.Row():
         gr.HTML(CHUANHU_TITLE, elem_id="app_title")
-        status_display = gr.Markdown("Login account:", elem_id="status_display")
+        status_display = gr.Markdown("", elem_id="status_display")
         
     with gr.Row().style(equal_height=True):
         with gr.Column(scale=5):
             with gr.Row():
-                chatbot = gr.Chatbot(label="Chuanhu Chat", elem_id="chuanhu_chatbot").style(height="100%")
+                chatbot = gr.Chatbot(label="ChatEdu", elem_id="chuanhu_chatbot").style(height="100%")
             with gr.Row():
                 with gr.Column(min_width=225, scale=12):
                     user_input = gr.Textbox(
@@ -71,6 +71,7 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
         with gr.Column():
             with gr.Column(min_width=50, scale=1):
                 with gr.Tab(label=i18n("模型")):
+                    user_name_Txt = gr.Markdown(f"Current User: {user_name.value}")
                     keyTxt = gr.Textbox(
                         show_label=True,
                         placeholder=f"Your API-key...",
@@ -277,17 +278,17 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
         if hasattr(request, "username") and request.username: # is not None or is not ""
             logging.info(f"Get User Name: {request.username}")
             user_info, user_name = gr.Markdown.update(value=f"User: {request.username}"), request.username
-            status_display = gr.Markdown.update(value=f"Login account: {request.username}")
+            user_name_Txt = gr.Markdown.update(value=f"Current User: {user_name}")
         else:
             logging.info(f"No User Name!")
             user_info, user_name = gr.Markdown.update(value=f"", visible=False), ""
         current_model = get_model(model_name = MODELS[DEFAULT_MODEL], access_key = my_api_key)[0]
         current_model.set_user_identifier(user_name)
         chatbot = gr.Chatbot.update(label=MODELS[DEFAULT_MODEL])
-        return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *current_model.auto_load(), get_history_names(False, user_name), chatbot
-    demo.load(create_greeting, inputs=None, outputs=[user_info, user_name, current_model, like_dislike_area, systemPromptTxt, chatbot, historyFileSelectDropdown, chatbot], api_name="load")
+        return user_info, user_name, current_model, toggle_like_btn_visibility(DEFAULT_MODEL), *current_model.auto_load(), get_history_names(False, user_name), chatbot, user_name_Txt
+    demo.load(create_greeting, inputs=None, outputs=[user_info, user_name, current_model, like_dislike_area, systemPromptTxt, chatbot, historyFileSelectDropdown, chatbot, user_name_Txt], api_name="load")
     
-    
+
     chatgpt_predict_args = dict(
         fn=predict,
         inputs=[
@@ -298,6 +299,7 @@ with gr.Blocks(css=customCSS, theme=small_and_beautiful_theme) as demo:
             use_websearch_checkbox,
             index_files,
             language_select_dropdown,
+            user_name
         ],
         outputs=[chatbot, status_display],
         show_progress=True,
@@ -475,7 +477,8 @@ demo.title = i18n("ChatEdu ✒️")
 
 if __name__ == "__main__":
     reload_javascript()
-    demo.queue(concurrency_count=CONCURRENT_COUNT, api_open=False).launch(
+    demo.queue(concurrency_count=CONCURRENT_COUNT, api_open=False)
+    demo.launch(
         server_name=server_name,
         server_port=server_port,
         share=share,
